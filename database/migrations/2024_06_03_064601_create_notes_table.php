@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class)->nullable();
             $table->string('title');
             $table->longText('description')->charset('binary')->nullable();
             $table->string('pin')->default('note');

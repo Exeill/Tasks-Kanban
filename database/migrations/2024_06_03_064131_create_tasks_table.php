@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class)->nullable();
             $table->string('title');
             $table->text('description');
             $table->boolean('urgent')->default(false);

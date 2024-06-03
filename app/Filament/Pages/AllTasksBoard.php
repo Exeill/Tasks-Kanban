@@ -49,21 +49,22 @@ class AllTasksBoard extends KanbanBoard
 
     protected static string $statusView = 'alltasks-kanban.kanban-status';
 
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     $user = Auth::user();
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
 
-    //     if ($user && $user->isAdmin()) {
-    //         return true;
-    //     }
+        if ($user && $user->role === 'ADMIN') {
+            return true;
+        }
 
-    //     return false;
-    // }
+        return false;
+    }
 
 
     protected static ?string $navigationIcon = 'heroicon-s-clipboard-document-list';
+
     protected ?string $subheading = 'Task with star is urgent';
-    
+
     // protected static string $recordStatusAttribute = 'status';
 
     protected static string $model = Task::class;
@@ -73,7 +74,16 @@ class AllTasksBoard extends KanbanBoard
     protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationGroup = 'Board';
+
     protected static ?string $title = 'All Tasks';
+
+    protected string $editModalTitle = 'Edit Record';
+
+    protected string $editModalSaveButtonLabel = 'Save';
+
+    protected string $editModalCancelButtonLabel = 'Cancel';
+
+    protected bool $editModalSlideOver = false;
 
 
     // protected function records(): Collection
@@ -95,8 +105,8 @@ class AllTasksBoard extends KanbanBoard
 
         // Retrieve tasks created from Monday to Friday and with status not equal to 'done'
         return Task::ordered()
-                    ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-                    ->get();
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->get();
     }
 
 
@@ -116,28 +126,28 @@ class AllTasksBoard extends KanbanBoard
     protected function getEditModalFormSchema(null | int $recordId): array
     {
         return [
-           
+
             RadioDeck::make('is_done')
-            ->label('Status')
-                        ->options(CompletedStatus::class)
-                        ->descriptions(CompletedStatus::class)
-                        ->icons(CompletedStatus::class)
-                        ->required()
-                        ->iconSize(IconSize::Small)
-                        ->iconPosition(IconPosition::Before)
-                        ->alignment(Alignment::Center)
-                        ->extraCardsAttributes([
-                            'class' => 'rounded-md'
-                        ])
-                        ->extraOptionsAttributes([
-                            'class' => 'text-sm leading-none w-full flex flex-col items-center justify-center p-1'
-                        ])
-                        ->extraDescriptionsAttributes([ 
-                            'class' => 'text-xs font-light text-center'
-                        ])
-                        ->color('primary')
-                        ->padding('px-3 px-3') 
-                        ->columns(3),
+                ->label('Status')
+                ->options(CompletedStatus::class)
+                ->descriptions(CompletedStatus::class)
+                ->icons(CompletedStatus::class)
+                ->required()
+                ->iconSize(IconSize::Small)
+                ->iconPosition(IconPosition::Before)
+                ->alignment(Alignment::Center)
+                ->extraCardsAttributes([
+                    'class' => 'rounded-md'
+                ])
+                ->extraOptionsAttributes([
+                    'class' => 'text-sm leading-none w-full flex flex-col items-center justify-center p-1'
+                ])
+                ->extraDescriptionsAttributes([
+                    'class' => 'text-xs font-light text-center'
+                ])
+                ->color('primary')
+                ->padding('px-3 px-3')
+                ->columns(3),
 
             Section::make('Task Details')
                 ->description(' ')
@@ -146,7 +156,7 @@ class AllTasksBoard extends KanbanBoard
                     Toggle::make('urgent')
                         ->required()
                         ->columnSpan(1),
-                       
+
                     TextInput::make('progress')
                         ->label('')
                         ->prefix('Progress')
@@ -204,72 +214,72 @@ class AllTasksBoard extends KanbanBoard
                         ->label('User')
                         ->hint('Assigned User/s')
                         ->helperText(' ')->columnSpan(3),
-                       
-                        Cluster::make([
-                            Select::make('text_color')
-                                    ->default('text-white')
-                                    ->required()
-                                    ->options([
-                                        'text-white' => 'white',
-                                        'text-black' => 'black',
-                                        'text-yellow-400' => 'yellow',
-                                        'text-red-600' => 'red',
-                                        'text-sky-600' => 'blue',
-                                        'text-lime-600' => 'green',
-                                    ])
-                                    ->label(__('Text Color'))
-                                    ->columnSpan(1),
 
-                                Select::make('bg_color')
-                                    ->default('bg-sky-400')
-                                    ->required()
-                                    ->options([
-                                        'bg-white' => 'white',
-                                        'bg-black' => 'black',
-                                        'bg-sky-400' => 'blue',
-                                        'bg-sky-800' => 'dark blue',
-                                        'bg-red-400' => 'red',
-                                        'bg-orange-400' => 'orange',
-                                        'bg-yellow-400' => 'yellow',
-                                        'bg-lime-400' => 'lime',
-                                        'bg-green-400' => 'green',
-                                        'bg-teal-400' => 'teal',
-                                        'bg-cyan-400' => 'cyan',
-                                        'bg-violet-400' => 'violet',
-                                        'bg-fuchsia-400' => 'fucshia',
-                                        'bg-pink-400' => 'pink',
-                                        'bg-rose-400' => 'rose',
-                                    ])
-                                    
-                                    ->label(__('Background Color'))
-                                    ->columnSpan(1),
-                        ])
-                            ->label('Customization - Text Color | BG Color')
-                            ->hint('Default is White Text & Blue Background')
-                            ->helperText(' ')->columnSpan(3),
-                            ToggleButtons::make('status')
-                            ->label('Set')->inline()->grouped()
+                    Cluster::make([
+                        Select::make('text_color')
+                            ->default('text-white')
+                            ->required()
                             ->options([
-                                'todo' => 'Back to Todo',
-                                'ongoing' => 'On-Going',
-                                'review' => 'For Review',
-                                'deleted' => 'Delete',
+                                'text-white' => 'white',
+                                'text-black' => 'black',
+                                'text-yellow-400' => 'yellow',
+                                'text-red-600' => 'red',
+                                'text-sky-600' => 'blue',
+                                'text-lime-600' => 'green',
                             ])
-                            ->colors([
-                                'todo' => 'info',
-                                'ongoing' => 'warning',
-                                'review' => 'success',
-                                'deleted' => 'danger',
+                            ->label(__('Text Color'))
+                            ->columnSpan(1),
+
+                        Select::make('bg_color')
+                            ->default('bg-sky-400')
+                            ->required()
+                            ->options([
+                                'bg-white' => 'white',
+                                'bg-black' => 'black',
+                                'bg-sky-400' => 'blue',
+                                'bg-sky-800' => 'dark blue',
+                                'bg-red-400' => 'red',
+                                'bg-orange-400' => 'orange',
+                                'bg-yellow-400' => 'yellow',
+                                'bg-lime-400' => 'lime',
+                                'bg-green-400' => 'green',
+                                'bg-teal-400' => 'teal',
+                                'bg-cyan-400' => 'cyan',
+                                'bg-violet-400' => 'violet',
+                                'bg-fuchsia-400' => 'fucshia',
+                                'bg-pink-400' => 'pink',
+                                'bg-rose-400' => 'rose',
                             ])
-                            
+
+                            ->label(__('Background Color'))
+                            ->columnSpan(1),
+                    ])
+                        ->label('Customization - Text Color | BG Color')
+                        ->hint('Default is White Text & Blue Background')
+                        ->helperText(' ')->columnSpan(3),
+                    ToggleButtons::make('status')
+                        ->label('Set')->inline()->grouped()
+                        ->options([
+                            'todo' => 'Back to Todo',
+                            'ongoing' => 'On-Going',
+                            'review' => 'For Review',
+                            'deleted' => 'Delete',
+                        ])
+                        ->colors([
+                            'todo' => 'info',
+                            'ongoing' => 'warning',
+                            'review' => 'success',
+                            'deleted' => 'danger',
+                        ])
+
 
                 ])->columns(3),
 
-                
- 
-                
 
-                
+
+
+
+
 
         ];
     }
@@ -357,51 +367,51 @@ class AllTasksBoard extends KanbanBoard
                         ->hint('Assigned User/s')
                         ->helperText(' ')->columns(3),
 
-                        Cluster::make([
-                            Select::make('text_color')
-                                    ->default('text-white')
-                                    ->required()
-                                    ->options([
-                                        'text-white' => 'white',
-                                        'text-black' => 'black',
-                                        'text-yellow-400' => 'yellow',
-                                        'text-red-600' => 'red',
-                                        'text-sky-600' => 'blue',
-                                        'text-lime-600' => 'green',
-                                    ])
-                                    ->label(__('Text Color')),
+                    Cluster::make([
+                        Select::make('text_color')
+                            ->default('text-white')
+                            ->required()
+                            ->options([
+                                'text-white' => 'white',
+                                'text-black' => 'black',
+                                'text-yellow-400' => 'yellow',
+                                'text-red-600' => 'red',
+                                'text-sky-600' => 'blue',
+                                'text-lime-600' => 'green',
+                            ])
+                            ->label(__('Text Color')),
 
-                                Select::make('bg_color')
-                                    ->default('bg-sky-400')
-                                    ->required()
-                                    ->options([
-                                        'bg-white' => 'white',
-                                        'bg-black' => 'black',
-                                        'bg-sky-400' => 'blue',
-                                        'bg-sky-800' => 'dark blue',
-                                        'bg-red-400' => 'red',
-                                        'bg-orange-400' => 'orange',
-                                        'bg-yellow-400' => 'yellow',
-                                        'bg-lime-400' => 'lime',
-                                        'bg-green-400' => 'green',
-                                        'bg-teal-400' => 'teal',
-                                        'bg-cyan-400' => 'cyan',
-                                        'bg-violet-400' => 'violet',
-                                        'bg-fuchsia-400' => 'fucshia',
-                                        'bg-pink-400' => 'pink',
-                                        'bg-rose-400' => 'rose',
-                                    ])
-                                    
-                                    ->label(__('Background Color')),
-                        ])
-                            ->label('Customization - Text Color | BG Color')
-                            ->hint('Default is White Text & Blue Background')
-                            ->helperText(' ')->columns(2),
-                        
+                        Select::make('bg_color')
+                            ->default('bg-sky-400')
+                            ->required()
+                            ->options([
+                                'bg-white' => 'white',
+                                'bg-black' => 'black',
+                                'bg-sky-400' => 'blue',
+                                'bg-sky-800' => 'dark blue',
+                                'bg-red-400' => 'red',
+                                'bg-orange-400' => 'orange',
+                                'bg-yellow-400' => 'yellow',
+                                'bg-lime-400' => 'lime',
+                                'bg-green-400' => 'green',
+                                'bg-teal-400' => 'teal',
+                                'bg-cyan-400' => 'cyan',
+                                'bg-violet-400' => 'violet',
+                                'bg-fuchsia-400' => 'fucshia',
+                                'bg-pink-400' => 'pink',
+                                'bg-rose-400' => 'rose',
+                            ])
+
+                            ->label(__('Background Color')),
+                    ])
+                        ->label('Customization - Text Color | BG Color')
+                        ->hint('Default is White Text & Blue Background')
+                        ->helperText(' ')->columns(2),
+
 
                 ]),
-                
-            
+
+
         ];
     }
 
@@ -409,7 +419,7 @@ class AllTasksBoard extends KanbanBoard
     {
 
         return collect([
-            
+
             'urgent' => $record->urgent,
             'progress' => $record->progress,
             // 'owner' => $record->user->name,
@@ -420,5 +430,4 @@ class AllTasksBoard extends KanbanBoard
 
         ]);
     }
-
 }

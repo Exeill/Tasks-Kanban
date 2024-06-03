@@ -28,7 +28,7 @@
         <div class="flex flex-row gap-x-2 my-2">
             <div
                 class="w-8 h-8 rounded-full shadow shadow-gray-400 {{ $record->bg_color }} border-2 border-white pt-[2px] text-center items-center">
-                <span class="text-sm">{{ strtoupper($record->user->name[0]) }}</span>
+                <span class="text-sm">{{ strtoupper($record->user?->name[0]) }}</span>
             </div>
             <div>
                 <div class="font-light text-sm">

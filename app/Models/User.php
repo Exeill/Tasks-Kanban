@@ -38,6 +38,10 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_EDITOR;
     }
 
+    public function isUser(){
+        return $this->role === self::ROLE_USER;
+    }
+
 
     /**
      * The attributes that are mass assignable.
@@ -52,9 +56,9 @@ class User extends Authenticatable implements FilamentUser
         'role'
     ];
 
-    protected $appends = [
-        'profile_photo_url',
-    ];
+    // protected $appends = [
+    //     'profile_photo_url',
+    // ];
 
     /**
      * The attributes that should be hidden for serialization.

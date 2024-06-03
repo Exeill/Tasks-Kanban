@@ -16,7 +16,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Task extends Model implements Sortable
 {
-    use HasFactory, SortableTrait;
+    use HasFactory, SortableTrait, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -42,51 +42,51 @@ class Task extends Model implements Sortable
         'created_at' => 'datetime:m-d-Y h:i A',
 
     ];
-    // public function user_tasks()
-    // {
-    //     return $this->belongsToMany(User::class, 'task_user')->withTimestamps();
-    // }
+    public function user_tasks()
+    {
+        return $this->belongsToMany(User::class, 'task_user')->withTimestamps();
+    }
 
     protected static $recordEvents = ['created','updated','deleted'];
     
         
-    // public function getActivitylogOptions(): LogOptions
-    // {
+    public function getActivitylogOptions(): LogOptions
+    {
         
-    //     return LogOptions::defaults()
+        return LogOptions::defaults()
         
 
-    //     ->dontSubmitEmptyLogs()
-    //     ->setDescriptionForEvent(fn(string $eventName) => "Tasks has been {$eventName}")
-    //         ->logOnly([
-    //             'user_id',
-    //             'title',
-    //             'progress',
-    //             'status',
-    //             'created_at',
-    //             'updated_at',
-    //         ])
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn(string $eventName) => "Tasks has been {$eventName}")
+            ->logOnly([
+                'user_id',
+                'title',
+                'progress',
+                'status',
+                'created_at',
+                'updated_at',
+            ])
                 
-    //         ->logOnlyDirty()
-    //     ->dontLogIfAttributesChangedOnly([
-    //         'user',
-    //         'title',
-    //         'description',
-    //         'updated_at',
-    //         'due_date',
-    //         'order_column',
-    //         'urgent',
-    //         'team',
-    //         'user',
-    //         'is_done',
-    //         'text_color',
-    //         'bg_color'])
+            ->logOnlyDirty()
+        ->dontLogIfAttributesChangedOnly([
+            'user',
+            'title',
+            'description',
+            'updated_at',
+            'due_date',
+            'order_column',
+            'urgent',
+            'team',
+            'user',
+            'is_done',
+            'text_color',
+            'bg_color'])
     
         
-    //     ;
+        ;
         
             
-    // }
+    }
 
     public function user() 
     {

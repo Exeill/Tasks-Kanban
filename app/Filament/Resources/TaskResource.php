@@ -28,7 +28,7 @@ class TaskResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Board';    
+    protected static ?string $navigationGroup = 'Board';
 
     protected static ?string $title = 'History';
 
@@ -143,7 +143,7 @@ class TaskResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
-                // Action::make('history')->url(fn ($record) => TaskResource::getUrl('history', ['record' => $record]))
+                Action::make('history')->url(fn ($record) => TaskResource::getUrl('history', ['record' => $record]))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -165,7 +165,7 @@ class TaskResource extends Resource
             'index' => Pages\ListTasks::route('/'),
             // 'create' => Pages\CreateTask::route('/create'),
             'view' => Pages\ViewTask::route('/{record}'),
-            // 'history' => Pages\ActivityLogPage::route('/{record}/history'),
+            'history' => Pages\TaskActivityLogPage::route('/{record}/history'),
             'edit' => Pages\EditTask::route('/{record}/edit'),
         ];
     }
