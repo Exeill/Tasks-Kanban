@@ -14,7 +14,9 @@
         "laravel/tinker": "^2.9",
         "mokhosh/filament-kanban": "^2.8",
         "noxoua/filament-activity-log": "^2.2",
+        "psr/simple-cache": "2.0",
         "pxlrbt/filament-activity-log": "^1.1",
+        "pxlrbt/filament-excel": "^2.3",
         "saade/filament-fullcalendar": "^3.2",
         "spatie/eloquent-sortable": "^4.3",
         "swisnl/filament-backgrounds": "^1.1"

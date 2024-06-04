@@ -17,10 +17,17 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter as FiltersFilter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use Filament\Tables\Filters\Filter;
 
 class TaskResource extends Resource
 {
@@ -125,6 +132,11 @@ class TaskResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->badge(),
+                    TextColumn::make('is_done')
+                    ->label('Review Status')
+                    ->sortable()
+                    ->searchable()
+                    ->badge(),
                 TextColumn::make('progress')
                     ->suffix('%')
                     ->numeric()
@@ -138,16 +150,48 @@ class TaskResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('updated_at','desc')
             ->filters([
+                SelectFilter::make('user')->relationship('user', 'name'),
+                Filter::make('created_at')
+            ->form([
+        Forms\Components\DatePicker::make('created_from'),
+        Forms\Components\DatePicker::make('created_until')->default(now()),
+        
+            ]),
+            Filter::make('updated_at')
+            ->form([
+        Forms\Components\DatePicker::make('updated_from'),
+        Forms\Components\DatePicker::make('updated_until')->default(now()),
+        
+    ])
                 //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
-                Action::make('history')->url(fn ($record) => TaskResource::getUrl('history', ['record' => $record]))
+                Action::make('history')->url(fn ($record) => TaskResource::getUrl('history', ['record' => $record])),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')
+                        ->fromTable()
+                        ->askForFilename()
+                        ->askForWriterType()
+                        // ->withFilename(date('Y-m-d') . ' - export')
+                        // ->withWriterType(\Maatwebsite\Excel\Excel::XLSX)
+                        ->withColumns([
+                            Column::make('user.name')->heading('Name'),
+                            Column::make('title')->heading('Task'),
+                            Column::make('progress')->heading('progress'),
+                            Column::make('status')->heading('Status'),
+                            Column::make('is_done')->heading(' Review Status'),
+                            Column::make('updated_at'),
+                            Column::make('created_at'),
+                            Column::make('deleted_at'),
+                        ]),
+                    ])
                 ]),
             ]);
     }

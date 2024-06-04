@@ -5,6 +5,9 @@ namespace App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class ListTasks extends ListRecords
 {
@@ -14,6 +17,10 @@ class ListTasks extends ListRecords
     {
         return [
             // Actions\CreateAction::make(),
+            // ExportAction::make()->exports([
+                
+            // ])
         ];
     }
+
 }
